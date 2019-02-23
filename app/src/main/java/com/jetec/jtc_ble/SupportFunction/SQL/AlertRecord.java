@@ -58,21 +58,21 @@ public class AlertRecord extends SQLiteOpenHelper {
         super.close();
     }
 
-    public int getCount(String address){
+    public int getCount(String address) {
         SQLiteDatabase db = this.getWritableDatabase();
         @SuppressLint("Recycle")
-        Cursor cursor=db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?", new String[] {address});
+        Cursor cursor = db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?", new String[]{address});
         //Cursor cursor = db.rawQuery("SELECT * FROM " + table_name, null);
         return cursor.getCount();
     }
 
-    public int size(){
+    public int size() {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + table_name, null);
         return cursor.getCount();
     }
 
-    public ArrayList<String> address(){
+    public ArrayList<String> address() {
         ArrayList<String> dataList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         dataList.clear();
@@ -83,21 +83,20 @@ public class AlertRecord extends SQLiteOpenHelper {
         do {
             boolean ckeck = false;
             String address = cursor.getString(cursor.getColumnIndex("address"));
-            if(dataList.size() == 0){
+            if (dataList.size() == 0) {
                 dataList.add(address);
-            }
-            else {
-                for(int i = 0; i < dataList.size(); i++){
+            } else {
+                for (int i = 0; i < dataList.size(); i++) {
                     String a = dataList.get(i);
-                    if(a.matches(address)){
+                    if (a.matches(address)) {
                         ckeck = true;
                     }
                 }
-                if(!ckeck){
+                if (!ckeck) {
                     dataList.add(address);
                 }
             }
-        }while(cursor.moveToNext());
+        } while (cursor.moveToNext());
 
         return dataList;
     }
@@ -107,7 +106,7 @@ public class AlertRecord extends SQLiteOpenHelper {
         db.execSQL("DELETE FROM " + table_name);
     }
 
-    public ArrayList<List<String>> allRecordList(){
+    public ArrayList<List<String>> allRecordList() {
         ArrayList<List<String>> dataList = new ArrayList<>();
         dataList.clear();
 
@@ -116,9 +115,9 @@ public class AlertRecord extends SQLiteOpenHelper {
         @SuppressLint("Recycle")
         Cursor cursor = db.rawQuery("SELECT * FROM " + table_name, null);
 
-        if(cursor.getCount() != 0) {
+        if (cursor.getCount() != 0) {
             cursor.moveToLast();
-            do{
+            do {
                 List<String> recordList = new ArrayList<>();
                 recordList.clear();
                 String devicename = cursor.getString(cursor.getColumnIndex("devicename"));
@@ -132,16 +131,16 @@ public class AlertRecord extends SQLiteOpenHelper {
                 recordList.add(jsonvalue);
 
                 dataList.add(recordList);
-            }while(cursor.moveToPrevious());
+            } while (cursor.moveToPrevious());
         }
 
         return dataList;
     }
 
-    public void delete(String address){
+    public void delete(String address) {
         SQLiteDatabase db = this.getWritableDatabase();
-        String[] del = new String[] {address};
-        db.delete(table_name, "address" + "=?",del);
+        String[] del = new String[]{address};
+        db.delete(table_name, "address" + "=?", del);
     }
 
     public void insert(String address, String devicename, String time, JSONArray jsonvalue) {
@@ -156,13 +155,13 @@ public class AlertRecord extends SQLiteOpenHelper {
         db.insert(table_name, address, cv);
     }
 
-    public List<String> getlist(String address){
+    public List<String> getlist(String address) {
         List<String> dataList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
         @SuppressLint("Recycle")
-        Cursor cursor = db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?", new String[] {address});
+        Cursor cursor = db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?", new String[]{address});
 
-        if(cursor.getCount() != 0) {
+        if (cursor.getCount() != 0) {
             cursor.moveToLast();
             Log.e("myLog", "cursor =" + cursor.getCount());
             String devicename = cursor.getString(cursor.getColumnIndex("devicename"));
@@ -177,18 +176,18 @@ public class AlertRecord extends SQLiteOpenHelper {
         return dataList;
     }
 
-    public ArrayList<List<String>> getRecordList(String address){
+    public ArrayList<List<String>> getRecordList(String address) {
         ArrayList<List<String>> dataList = new ArrayList<>();
         dataList.clear();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
         @SuppressLint("Recycle")
-        Cursor cursor = db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?", new String[] {address});
+        Cursor cursor = db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?", new String[]{address});
 
-        if(cursor.getCount() != 0) {
+        if (cursor.getCount() != 0) {
             cursor.moveToLast();
-            do{
+            do {
                 List<String> recordList = new ArrayList<>();
                 recordList.clear();
                 String devicename = cursor.getString(cursor.getColumnIndex("devicename"));
@@ -201,19 +200,19 @@ public class AlertRecord extends SQLiteOpenHelper {
                 recordList.add(jsonvalue);
 
                 dataList.add(recordList);
-            }while(cursor.moveToPrevious());
+            } while (cursor.moveToPrevious());
         }
 
         return dataList;
     }
 
-    public ArrayList<List<String>> getsortRecordList(ArrayList<String> recordAddress){
+    public ArrayList<List<String>> getsortRecordList(ArrayList<String> recordAddress) {
         ArrayList<List<String>> dataList = new ArrayList<>();
         dataList.clear();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        for(int i = 0; i < recordAddress.size(); i++) {
+        for (int i = 0; i < recordAddress.size(); i++) {
             @SuppressLint("Recycle")
             Cursor cursor = db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?",
                     new String[]{recordAddress.get(i)});
@@ -241,13 +240,13 @@ public class AlertRecord extends SQLiteOpenHelper {
         return dataList;
     }
 
-    public ArrayList<List<String>> exportList(ArrayList<String> recordAddress){
+    public ArrayList<List<String>> exportList(ArrayList<String> recordAddress) {
         ArrayList<List<String>> dataList = new ArrayList<>();
         dataList.clear();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        for(int i = 0; i < recordAddress.size(); i++) {
+        for (int i = 0; i < recordAddress.size(); i++) {
             @SuppressLint("Recycle")
             Cursor cursor = db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?",
                     new String[]{recordAddress.get(i)});
@@ -269,6 +268,50 @@ public class AlertRecord extends SQLiteOpenHelper {
 
                     dataList.add(recordList);
                 } while (cursor.moveToPrevious());
+            }
+        }
+
+        return dataList;
+    }
+
+    public List<Integer> device_count(ArrayList<String> recordAddress){
+        List<Integer> dataList = new ArrayList<>();
+        dataList.clear();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        for (int i = 0; i < recordAddress.size(); i++) {
+            @SuppressLint("Recycle")
+            Cursor cursor = db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?",
+                    new String[]{recordAddress.get(i)});
+
+            if (cursor.getCount() != 0) {
+                dataList.add(cursor.getCount());
+            }
+        }
+
+        return dataList;
+    }
+
+    public List<String> pdftitle(ArrayList<String> recordAddress) {
+        List<String> dataList = new ArrayList<>();
+        dataList.clear();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        for (int i = 0; i < recordAddress.size(); i++) {
+            @SuppressLint("Recycle")
+            Cursor cursor = db.rawQuery("SELECT * FROM " + table_name + " WHERE address = ?",
+                    new String[]{recordAddress.get(i)});
+
+            if (cursor.getCount() != 0) {
+                cursor.moveToFirst();
+
+                String devicename = cursor.getString(cursor.getColumnIndex("devicename"));
+                String address = cursor.getString(cursor.getColumnIndex("address"));
+
+                dataList.add(devicename);
+                dataList.add(address);
             }
         }
 

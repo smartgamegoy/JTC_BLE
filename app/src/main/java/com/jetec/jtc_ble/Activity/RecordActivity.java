@@ -17,14 +17,26 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.jetec.jtc_ble.R;
 import com.jetec.jtc_ble.SupportFunction.LogMessage;
+import com.jetec.jtc_ble.SupportFunction.PDF.*;
 import com.jetec.jtc_ble.SupportFunction.Runningcsv;
 import com.jetec.jtc_ble.SupportFunction.SQL.AlertRecord;
+import com.jetec.jtc_ble.SupportFunction.Value;
 import com.jetec.jtc_ble.SupportFunction.ViewAdapter.RecordView;
 import com.opencsv.CSVWriter;
+
 import org.json.JSONArray;
 import org.json.JSONException;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,10 +52,13 @@ public class RecordActivity extends AppCompatActivity {
     private Vibrator vibrator;
     private LogMessage logMessage = new LogMessage();
     private AlertRecord alertRecord;
+    private HeaderHandler headerHandler;
+    private FooterHandler footerHandler;
+    private CreatTable creatTable;
     private boolean csvdo = false;
     private Runningcsv runningcsv;
     private RecordView recordView;
-    private File file;
+    private File file, pdffile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +83,7 @@ public class RecordActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
 
         new Thread(makecsv).start();
-
+        new Thread(makepdf).start();
 
         ListView listView = findViewById(R.id.listview);
         Spinner spinner = findViewById(R.id.toolbar);
@@ -150,6 +165,73 @@ public class RecordActivity extends AppCompatActivity {
         return str;
     }
 
+    private Runnable makepdf = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+                // SD卡位置getApplicationContext().getFilesDir().getAbsolutePath();
+                // 系統位置android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
+                String fileName = "JetecRemote" + ".pdf";
+                String filePath = baseDir + File.separator + fileName;
+                pdffile = new File(filePath);
+
+                ArrayList<String> addresslist = new ArrayList<>();
+                addresslist.clear();
+                addresslist.addAll(alertRecord.address());
+
+                ArrayList<List<String>> recordList = new ArrayList<>();
+                recordList.clear();
+                recordList = alertRecord.exportList(addresslist);
+
+                List<Integer> device_count = new ArrayList<>();
+                device_count.clear();
+                device_count = alertRecord.device_count(addresslist);
+
+                List<String> pdftitle = new ArrayList<>();
+                pdftitle.clear();
+                pdftitle = alertRecord.pdftitle(addresslist);
+
+                headerHandler = new HeaderHandler();
+                footerHandler = new FooterHandler();
+                creatTable = new CreatTable();
+                Document document = new Document(PageSize.A4, -20, -20, 40, 40);
+                FileOutputStream fOut = new FileOutputStream(pdffile);
+                PdfWriter writer = PdfWriter.getInstance(document, fOut);
+                /*BaseFont bfChinese = BaseFont.createFont("STSongStd-Light", "UniGB-UTF16-H", true);
+                Font chineseFont = new Font(bfChinese, 12, Font.NORMAL);*/
+                //Paragraph title = new Paragraph(gettitle, chineseFont);
+                headerHandler.setHeader(pdftitle, device_count, recordList);
+                footerHandler.setallpage(pdftitle, device_count, recordList);
+                writer.setPageEvent(headerHandler);
+                writer.setPageEvent(footerHandler);
+
+                //document.open();
+                creatTable.setList(RecordActivity.this, pdftitle, device_count, recordList);
+                //document.add(creatTable.createTable(document));
+                //document.close();
+                /*Log.e(TAG, "已完成");
+                setdpp = true;
+                if (running.isShowing()) {
+                    running.dismiss();
+                    if (flag == 1) {
+                        Intent shareIntent = new Intent();
+                        shareIntent.setAction(Intent.ACTION_SEND);
+                        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(pdffile));
+                        shareIntent.setType("text/*");
+                        startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
+                    } else if (flag == 2) {
+                        Intent intent = new Intent(LogChartView.this, PDFView.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }*/
+            } catch (IOException | DocumentException e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     private Runnable makecsv = new Runnable() {
         @Override
         public void run() {
@@ -198,27 +280,27 @@ public class RecordActivity extends AppCompatActivity {
                     data_array[n] = csvtitle.get(n);
                 }
 
-                logMessage.showmessage(TAG,"data_array = " + csvtitle);
+                logMessage.showmessage(TAG, "data_array = " + csvtitle);
 
                 String[] data2;
                 String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
 
-                logMessage.showmessage(TAG,"baseDir = " + baseDir);
+                logMessage.showmessage(TAG, "baseDir = " + baseDir);
                 // SD卡位置getApplicationContext().getFilesDir().getAbsolutePath();
                 // 系統位置android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
 
                 String fileName = "JetecBLE" + ".csv";
                 String filePath = baseDir + File.separator + fileName;
 
-                logMessage.showmessage(TAG,"filePath = " + filePath);
+                logMessage.showmessage(TAG, "filePath = " + filePath);
 
                 file = new File(filePath);
                 CSVWriter writer;
 
-                logMessage.showmessage(TAG,"file = " + file);
+                logMessage.showmessage(TAG, "file = " + file);
 
                 String address = "";
-                byte[] BOM_UTF8 = { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
+                byte[] BOM_UTF8 = {(byte) 0xEF, (byte) 0xBB, (byte) 0xBF};
 
                 if (file.exists() && !file.isDirectory()) {
                     FileOutputStream os = new FileOutputStream(filePath);
@@ -228,44 +310,43 @@ public class RecordActivity extends AppCompatActivity {
                     writer.writeNext(data_array);
                     for (int i = 0; i < recordList.size(); i++) {
                         data2 = new String[csvtitle.size()];
-                        for(int k = 0; k < data2.length; k++){
+                        for (int k = 0; k < data2.length; k++) {
                             data2[k] = "";
                         }
                         List<String> dataList = new ArrayList<>();
                         dataList.clear();
                         dataList = recordList.get(i);
-                        logMessage.showmessage(TAG,"dataList = " + dataList);
-                        for(int j = 0; j < dataList.size(); j++) {
-                            if(j == 0){
+                        logMessage.showmessage(TAG, "dataList = " + dataList);
+                        for (int j = 0; j < dataList.size(); j++) {
+                            if (j == 0) {
                                 data2[j] = String.valueOf(i);
                             }
-                            if(j != dataList.size() - 1) {
-                                if(j == 0) {
-                                    if(address.matches("")) {
+                            if (j != dataList.size() - 1) {
+                                if (j == 0) {
+                                    if (address.matches("")) {
                                         data2[j + 1] = dataList.get(j);
                                         address = dataList.get(j);
-                                    }else {
-                                        if(dataList.get(j).matches(address)){
+                                    } else {
+                                        if (dataList.get(j).matches(address)) {
                                             data2[j + 1] = "-";
-                                        }else {
+                                        } else {
                                             data2[j + 1] = dataList.get(j);
                                             address = dataList.get(j);
                                         }
                                     }
-                                }else {
+                                } else {
                                     data2[j + 1] = dataList.get(j);
                                 }
-                            }
-                            else {
+                            } else {
                                 JSONArray jsonArray = new JSONArray(dataList.get(j));
                                 for (int k = 0; k < jsonArray.length(); k = k + 4) {
                                     String unit = getunit(jsonArray.get(k).toString());
                                     int n = csvtitle.indexOf(unit);
-                                    if(k != jsonArray.length())
+                                    if (k != jsonArray.length())
                                         data2[n] = jsonArray.get(k + 1).toString();
                                 }
                             }
-                            logMessage.showmessage(TAG,"if data2 = " + Arrays.toString(data2));
+                            logMessage.showmessage(TAG, "if data2 = " + Arrays.toString(data2));
                         }
                         writer.writeNext(data2);
                     }
@@ -278,44 +359,43 @@ public class RecordActivity extends AppCompatActivity {
                     writer.writeNext(data_array);
                     for (int i = 0; i < recordList.size(); i++) {
                         data2 = new String[csvtitle.size()];
-                        for(int k = 0; k < data2.length; k++){
+                        for (int k = 0; k < data2.length; k++) {
                             data2[k] = "";
                         }
                         List<String> dataList = new ArrayList<>();
                         dataList.clear();
                         dataList = recordList.get(i);
-                        logMessage.showmessage(TAG,"dataList = " + dataList);
-                        for(int j = 0; j < dataList.size(); j++) {
-                            if(j == 0){
+                        logMessage.showmessage(TAG, "dataList = " + dataList);
+                        for (int j = 0; j < dataList.size(); j++) {
+                            if (j == 0) {
                                 data2[j] = String.valueOf(i);
                             }
-                            if(j != dataList.size() - 1) {
-                                if(j == 0) {
-                                    if(address.matches("")) {
+                            if (j != dataList.size() - 1) {
+                                if (j == 0) {
+                                    if (address.matches("")) {
                                         data2[j + 1] = dataList.get(j);
                                         address = dataList.get(j);
-                                    }else {
-                                        if(dataList.get(j).matches(address)){
+                                    } else {
+                                        if (dataList.get(j).matches(address)) {
                                             data2[j + 1] = "-";
-                                        }else {
+                                        } else {
                                             data2[j + 1] = dataList.get(j);
                                             address = dataList.get(j);
                                         }
                                     }
-                                }else {
+                                } else {
                                     data2[j + 1] = dataList.get(j);
                                 }
-                            }
-                            else {
+                            } else {
                                 JSONArray jsonArray = new JSONArray(dataList.get(j));
                                 for (int k = 0; k < jsonArray.length(); k = k + 4) {
                                     String unit = getunit(jsonArray.get(k).toString());
                                     int n = csvtitle.indexOf(unit);
-                                    if(k != jsonArray.length())
+                                    if (k != jsonArray.length())
                                         data2[n] = jsonArray.get(k + 1).toString();
                                 }
                             }
-                            logMessage.showmessage(TAG,"if data2 = " + Arrays.toString(data2));
+                            logMessage.showmessage(TAG, "if data2 = " + Arrays.toString(data2));
                         }
                         writer.writeNext(data2);
                     }
@@ -324,7 +404,7 @@ public class RecordActivity extends AppCompatActivity {
 
                 csvdo = true;
 
-                if(runningcsv.isCheck()){
+                if (runningcsv.isCheck()) {
                     runningcsv.closeFlash();
                     csvtodo();
                 }
@@ -334,7 +414,7 @@ public class RecordActivity extends AppCompatActivity {
         }
     };
 
-    private void csvtodo(){
+    private void csvtodo() {
         Uri csvuri = Uri.fromFile(file);
         Intent shareIntent = new Intent();
         shareIntent.setAction(Intent.ACTION_SEND);
@@ -377,18 +457,16 @@ public class RecordActivity extends AppCompatActivity {
                     })
                     .setNegativeButton("CSV", (dialog, which) -> {
                         vibrator.vibrate(100);
-                        if(csvdo) {
+                        if (csvdo) {
                             csvtodo();
-                        }
-                        else {
+                        } else {
                             runningcsv.startFlash(getString(R.string.exportingcsv));
                         }
                     })
                     .setNeutralButton(R.string.butoon_no, (dialog, which) -> vibrator.vibrate(100))
                     .show();
             return true;
-        }
-        else if (id == R.id.delete) {
+        } else if (id == R.id.delete) {
             vibrator.vibrate(100);
             new AlertDialog.Builder(this)
                     .setTitle(R.string.deleterecord)
