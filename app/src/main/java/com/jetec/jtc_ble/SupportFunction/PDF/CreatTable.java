@@ -24,6 +24,7 @@ public class CreatTable {
     private Context context;
     private String TAG = "CreatTable";
     private LogMessage logMessage = new LogMessage();
+    private int calculate = 0;
 
     @SuppressLint("UseSparseArrays")
     private Map<Integer, List<String>> timeList = new HashMap<>();
@@ -202,7 +203,6 @@ public class CreatTable {
     public PdfPTable createTable(int geti){
 
         String a, b, c, d, e, f;
-        int calculate = 0;
         float fntSize, lineSpacing;
         fntSize = 8.0f;
         lineSpacing = 10f;
@@ -359,7 +359,7 @@ public class CreatTable {
             for (int j = 0; j < setPage.get(geti); j++) {
                 for (int k = 0; k < 2; k++) {
                     cell = new PdfPCell(new Paragraph(new Phrase(lineSpacing, context.getString(R.string.pdfdate),
-                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, fntSize))));
+                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7.5f))));
                     cell.setColspan(2);
                     cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                     cell.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
@@ -367,19 +367,19 @@ public class CreatTable {
                     table.addCell(cell);
 
                     cell1 = new PdfPCell(new Paragraph(new Phrase(lineSpacing, a,
-                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, fntSize))));
+                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7.5f))));
                     cell1.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
                     cell1.setMinimumHeight(18);
                     table.addCell(cell1);
 
                     cell2 = new PdfPCell(new Paragraph(new Phrase(lineSpacing, b,
-                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, fntSize))));
+                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7.5f))));
                     cell2.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
                     cell2.setMinimumHeight(18);
                     table.addCell(cell2);
 
                     cell3 = new PdfPCell(new Paragraph(new Phrase(lineSpacing, c,
-                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, fntSize))));
+                            FontFactory.getFont(FontFactory.HELVETICA_BOLD, 7.5f))));
                     cell3.setHorizontalAlignment(PdfPCell.ALIGN_CENTER);
                     cell3.setMinimumHeight(18);
                     table.addCell(cell3);
@@ -913,6 +913,8 @@ public class CreatTable {
             str = context.getString(R.string.pdfC) + "/" + "ppm";
         } else if (unit.matches("14")) {
             str = context.getString(R.string.pdfM) + "/" + (char) (181) + "g/m" + (char) (179);
+        }else if (unit.matches("15")) {
+            str = context.getString(R.string.pdfpercent) + "/" + "%";
         }
         return str;
     }

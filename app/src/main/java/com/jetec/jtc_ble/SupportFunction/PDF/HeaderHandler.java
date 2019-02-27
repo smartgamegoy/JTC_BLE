@@ -59,10 +59,10 @@ public class HeaderHandler extends PdfPageEventHelper {
                 List<String> dataList = new ArrayList<>();
                 dataList.clear();
                 dataList = recordList.get(i);
-                setAddress.add(dataList.get(0));
-                setName.add(dataList.get(1));
                 if(address.matches("")){
                     address = dataList.get(0);
+                    setAddress.add(dataList.get(0));
+                    setName.add(dataList.get(1));
                     JSONArray jsonArray = new JSONArray(dataList.get(3));
                     for(int j = 0; j < jsonArray.length(); j = j + 4){
                         count++;
@@ -93,6 +93,8 @@ public class HeaderHandler extends PdfPageEventHelper {
                 else {
                     if(!dataList.get(0).matches(address)){
                         address = dataList.get(0);
+                        setAddress.add(dataList.get(0));
+                        setName.add(dataList.get(1));
                         JSONArray jsonArray = new JSONArray(dataList.get(3));
                         for(int j = 0; j < jsonArray.length(); j = j + 4){
                             count++;

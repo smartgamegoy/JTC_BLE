@@ -386,6 +386,8 @@ public class RecordView extends BaseAdapter {
             str = context.getString(R.string.recordC);
         } else if (unit.matches("14")) {
             str = context.getString(R.string.recordM);
+        }else if (unit.matches("15")) {
+            str = context.getString(R.string.recordpercent);
         }
 
         return str;

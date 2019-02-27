@@ -59,9 +59,14 @@ public class GetDeviceNum {
             }
         }
         else if(str.startsWith("RL")){
+            char model = 0;
             String newStr = str.substring(str.indexOf("+") + 1, str.indexOf("."))
                     .replaceFirst("^0*", "");
-            char model = Value.model_name.charAt(Integer.valueOf(newStr) - 1);
+            Log.d(TAG, "newStr = " + newStr);
+            if(!newStr.matches("")) {
+                model = Value.model_name.charAt(Integer.valueOf(newStr) - 1);
+            }
+            Log.d(TAG, "model = " + model);
             if(String.valueOf(model).matches("P")){
                 renum = context.getString(R.string.P);
             }
@@ -77,8 +82,18 @@ public class GetDeviceNum {
             else if(String.valueOf(model).matches("H")){
                 renum = context.getString(R.string.H);
             }
+            else if(String.valueOf(model).matches("Z")){
+                renum = context.getString(R.string.percent);
+            }
+            else{
+                renum = "";
+            }
         }
         else if(str.startsWith("ADR")){
+            renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                    .replaceFirst("^0*", "");
+        }
+        else if(str.startsWith("PR")){
             renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
                     .replaceFirst("^0*", "");
         }

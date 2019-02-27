@@ -48,6 +48,9 @@ public class GetDeviceName {
             else if(name.get(0).toString().matches("M")){
                 rename = this.context.getString(R.string.M) + " " + this.context.getString(R.string.EH1);
             }
+            else if(name.get(0).toString().matches("Z")){
+                rename = this.context.getString(R.string.percent) + " " + this.context.getString(R.string.EH1);
+            }
         }
         if(str.startsWith("EH2")){
             if(name.get(1).toString().matches("T")){
@@ -69,6 +72,9 @@ public class GetDeviceName {
             }
             else if(name.get(1).toString().matches("M")){
                 rename = this.context.getString(R.string.M) + " " + this.context.getString(R.string.EH2);
+            }
+            else if(name.get(1).toString().matches("Z")){
+                rename = this.context.getString(R.string.percent) + " " + this.context.getString(R.string.EH2);
             }
         }
         if(str.startsWith("EH3")){
@@ -92,6 +98,9 @@ public class GetDeviceName {
             else if(name.get(2).toString().matches("M")){
                 rename = this.context.getString(R.string.M) + " " + this.context.getString(R.string.EH3);
             }
+            else if(name.get(2).toString().matches("Z")){
+                rename = this.context.getString(R.string.percent) + " " + this.context.getString(R.string.EH3);
+            }
         }
         if(str.startsWith("EL1")){
             if(name.get(0).toString().matches("T")){
@@ -113,6 +122,9 @@ public class GetDeviceName {
             }
             else if(name.get(0).toString().matches("M")){
                 rename = this.context.getString(R.string.M) + " " + this.context.getString(R.string.EL1);
+            }
+            else if(name.get(0).toString().matches("Z")){
+                rename = this.context.getString(R.string.percent) + " " + this.context.getString(R.string.EL1);
             }
         }
         if(str.startsWith("EL2")){
@@ -136,6 +148,9 @@ public class GetDeviceName {
             else if(name.get(1).toString().matches("M")){
                 rename = this.context.getString(R.string.M) + " " + this.context.getString(R.string.EL2);
             }
+            else if(name.get(1).toString().matches("Z")){
+                rename = this.context.getString(R.string.percent) + " " + this.context.getString(R.string.EL2);
+            }
         }
         if(str.startsWith("EL3")){
             if(name.get(2).toString().matches("T")){
@@ -157,6 +172,9 @@ public class GetDeviceName {
             }
             else if(name.get(2).toString().matches("M")){
                 rename = this.context.getString(R.string.M) + " " + this.context.getString(R.string.EL3);
+            }
+            else if(name.get(2).toString().matches("Z")){
+                rename = this.context.getString(R.string.percent) + " " + this.context.getString(R.string.EL3);
             }
         }
         if(str.startsWith("ADR")){
@@ -255,6 +273,9 @@ public class GetDeviceName {
         if(str.startsWith("RL")){
             char s = str.charAt(2);
             rename = this.context.getString(R.string.RL) + s;
+        }
+        if(str.startsWith("PR")){
+            rename = this.context.getString(R.string.percentadjustment);
         }
         /*if(str.startsWith("LOG")){
             rename = this.context.getString(R.string.LOG);

@@ -40,6 +40,15 @@ public class CheckDeviceName {
         else if(name.startsWith("RL3")){
             rename = "RL3";
         }
+        else if(name.startsWith("PR1")){
+            rename = "PR1";
+        }
+        else if(name.startsWith("PR2")){
+            rename = "PR2";
+        }
+        else if(name.startsWith("PR3")){
+            rename = "PR3";
+        }
         /*else if(name.startsWith("INTER")){
             rename = "INTER";
         }*/

@@ -92,6 +92,7 @@ public class FirstActivity extends AppCompatActivity {
     private final String[] E = {"EH", "EL"};
     private final String[] P = {"EH", "EL"};
     private final String[] M = {"EH", "EL"};
+    private final String[] Z = {"EH", "EL", "PR"};
     private final String[] L = {"COUNT", "INTER", "DATE", "TIME", "LOG"};
     private final String[] SP = {"ADR", "SPK"};
 
@@ -315,6 +316,7 @@ public class FirstActivity extends AppCompatActivity {
                 list = list.subList(list.indexOf(a) + 1, list.size());
                 for (int j = 0; j < list.size(); j = j + 4) {
                     logMessage.showmessage(TAG, "k = " + k);
+                    logMessage.showmessage(TAG, "list = " + list);
                     getvalue(k, list.get(j), list.get(j + 3), list.get(j + 1));
                     if (list.get(j + 3).matches("true")) {
                         saveRecord(Objects.requireNonNull(get_record.get(i)));
@@ -514,6 +516,7 @@ public class FirstActivity extends AppCompatActivity {
                             Value.model_num = Integer.valueOf(num);
                             Value.model_name = name;
                             Value.model_relay = Integer.valueOf(relay);
+                            selectItem.add("NAME");
                             logMessage.showmessage(TAG, "model_num = " + Value.model_num);
                             logMessage.showmessage(TAG, "model_name = " + Value.model_name);
                             logMessage.showmessage(TAG, "model_relay = " + Value.model_relay);
@@ -555,6 +558,11 @@ public class FirstActivity extends AppCompatActivity {
                                         String str = aP + (i + 1);
                                         newList.add(str);
                                     }
+                                }else if (name.charAt(i) == 'Z') {
+                                    for (String aP : Z) {
+                                        String str = aP + (i + 1);
+                                        newList.add(str);
+                                    }
                                 }
                                 /*else if(name.charAt(i) == 'I'){
                                     for(int j = 0; j < I.length; j++){
@@ -579,8 +587,7 @@ public class FirstActivity extends AppCompatActivity {
                             logMessage.showmessage(TAG, "selectItem = " + selectItem);
                             logMessage.showmessage(TAG, "reList = " + reList);
                             logMessage.showmessage(TAG, "dataList = " + dataList);
-                            if (Value.modelList.size() == selectItem.size() && Value.modelList.size() == reList.size()
-                                    && Value.modelList.size() == dataList.size()) {
+                            if (Value.modelList.size() == reList.size() && Value.modelList.size() == dataList.size()) {
                                 if (engineer) {
                                     checkpassword();
                                 } else {
@@ -595,7 +602,7 @@ public class FirstActivity extends AppCompatActivity {
                             }
                         } else {
                             if (text.startsWith("EH") || text.startsWith("EL") || text.startsWith("RL") ||
-                                    text.startsWith("ADR") || text.startsWith("SPK")) {
+                                    text.startsWith("ADR") || text.startsWith("SPK") || text.startsWith("PR")) {
                                 selectItem.add(checkDeviceName.setName(text));
                                 reList.add(text);
                                 dataList.add(checkDeviceNum.get(text));
@@ -736,6 +743,9 @@ public class FirstActivity extends AppCompatActivity {
                 } else if (unit.matches("14")) {
                     text1.setText(getString(R.string.pm));
                     linearLayout1.setBackgroundResource(R.drawable.pm);
+                }else if (unit.matches("15")) {
+                    text1.setText(getString(R.string.percent));
+                    linearLayout1.setBackgroundResource(R.drawable.humidity);
                 }
                 if (boolean_value.matches("true")) {
                     linearLayout1.setAnimation(animation);
@@ -793,6 +803,9 @@ public class FirstActivity extends AppCompatActivity {
                 } else if (unit.matches("14")) {
                     text3.setText(getString(R.string.pm));
                     linearLayout2.setBackgroundResource(R.drawable.pm);
+                }else if (unit.matches("15")) {
+                    text3.setText(getString(R.string.percent));
+                    linearLayout2.setBackgroundResource(R.drawable.humidity);
                 }
                 if (boolean_value.matches("true")) {
                     linearLayout2.setAnimation(animation);
@@ -802,6 +815,7 @@ public class FirstActivity extends AppCompatActivity {
             break;
             case 3: {
                 logMessage.showmessage(TAG, "近來");
+                logMessage.showmessage(TAG, "unit = " + unit);
                 linearLayout3.setVisibility(View.VISIBLE);
                 text5.setVisibility(View.VISIBLE);
                 text6.setVisibility(View.VISIBLE);
@@ -851,6 +865,9 @@ public class FirstActivity extends AppCompatActivity {
                 } else if (unit.matches("14")) {
                     text5.setText(getString(R.string.pm));
                     linearLayout3.setBackgroundResource(R.drawable.pm);
+                }else if (unit.matches("15")) {
+                    text5.setText(getString(R.string.percent));
+                    linearLayout3.setBackgroundResource(R.drawable.humidity);
                 }
                 if (boolean_value.matches("true")) {
                     linearLayout3.setAnimation(animation);
@@ -908,6 +925,9 @@ public class FirstActivity extends AppCompatActivity {
                 } else if (unit.matches("14")) {
                     text7.setText(getString(R.string.pm));
                     linearLayout4.setBackgroundResource(R.drawable.pm);
+                }else if (unit.matches("15")) {
+                    text7.setText(getString(R.string.percent));
+                    linearLayout4.setBackgroundResource(R.drawable.humidity);
                 }
                 if (boolean_value.matches("true")) {
                     linearLayout4.setAnimation(animation);
@@ -965,6 +985,9 @@ public class FirstActivity extends AppCompatActivity {
                 } else if (unit.matches("14")) {
                     text9.setText(getString(R.string.pm));
                     linearLayout5.setBackgroundResource(R.drawable.pm);
+                }else if (unit.matches("15")) {
+                    text9.setText(getString(R.string.percent));
+                    linearLayout5.setBackgroundResource(R.drawable.humidity);
                 }
                 if (boolean_value.matches("true")) {
                     linearLayout5.setAnimation(animation);
@@ -1022,6 +1045,9 @@ public class FirstActivity extends AppCompatActivity {
                 } else if (unit.matches("14")) {
                     text11.setText(getString(R.string.pm));
                     linearLayout6.setBackgroundResource(R.drawable.pm);
+                }else if (unit.matches("15")) {
+                    text11.setText(getString(R.string.percent));
+                    linearLayout6.setBackgroundResource(R.drawable.humidity);
                 }
                 if (boolean_value.matches("true")) {
                     linearLayout6.setAnimation(animation);

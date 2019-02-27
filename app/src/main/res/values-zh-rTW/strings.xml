@@ -21,6 +21,7 @@
     <string name="co">一氧化碳</string>
     <string name="co2">二氧化碳</string>
     <string name="pm">PM2.5</string>
+    <string name="percent">比例</string>
     <string name="connecting">連線中</string>
     <string name="butoon_yes">確定</string>
     <string name="butoon_no">取消</string>
@@ -66,6 +67,7 @@
     <string name="recordCO">一氧化碳:</string>
     <string name="recordP">壓力:</string>
     <string name="recordM">PM2.5:</string>
+    <string name="recordpercent">比例:</string>
     <string name="identify">識別碼:</string>
     <string name="exportingcsv">匯出csv中…</string>
     <string name="exportingpdf">匯出pdf中…</string>
@@ -75,8 +77,11 @@
     <string name="pdfH">Humidity</string>
     <string name="pdfC">CO2</string>
     <string name="pdfCO">CO</string>
-    <string name="pdfP">pressure</string>
+    <string name="pdfP">Pressure</string>
     <string name="pdfM">PM2.5</string>
+    <string name="pdfpercent">Proportion</string>
     <string name="PDFreport">PDF報表</string>
     <string name="print">列印</string>
+    <string name="changename">裝置名稱</string>
+    <string name="percentadjustment">比例調整</string>
 </resources>

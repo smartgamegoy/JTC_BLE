@@ -40,7 +40,7 @@ import static com.jetec.jtc_ble.Activity.FirstActivity.makeGattUpdateIntentFilte
 
 public class DeviceFunction extends AppCompatActivity {
 
-    private String TAG = "DeviceEngineer";
+    private String TAG = "DeviceFunction";
     private LogMessage logMessage = new LogMessage();
     private GetDeviceName getDeviceName;
     private GetDeviceNum getDeviceNum;
@@ -117,6 +117,8 @@ public class DeviceFunction extends AppCompatActivity {
         getDeviceName = new GetDeviceName(this, Value.model_name);
         getDeviceNum = new GetDeviceNum(this);
 
+        logMessage.showmessage(TAG,"reList = " + reList);
+
         for (int i = 0; i < reList.size(); i++) {
             deviceNameList.add(getDeviceName.get(reList.get(i)));
             deviceNumList.add(getDeviceNum.get(reList.get(i)));
@@ -136,6 +138,7 @@ public class DeviceFunction extends AppCompatActivity {
 
             vibrator.vibrate(100);
             String select = selectItem.get(position);
+            logMessage.showmessage(TAG,"select = " + select);
             //noinspection deprecation
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
             //String output = switch_dialog(select, List_d_function.get(position));

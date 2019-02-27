@@ -21,7 +21,7 @@ public class DeviceParse {
     private Map<Integer, Integer> checkdevice;
     private int key = 0;
     //private Thread thread;
-    private Boolean ckeckco;
+    private Boolean ckeckco, checkpercent;
     private static final int EBLE_MANDATA = 0xFF;//«Manufacturer Specific Data»	Bluetooth Core Specification:
     private static final int EBLE_128BitUUIDCom = 0x07;//«Complete List of 128-bit Service Class UUIDs»	Bluetooth Core Specification:
 
@@ -218,7 +218,10 @@ public class DeviceParse {
                 flag = "10";
                 break;
             case ("%"):
-                flag = "11";
+                if(!checkpercent)
+                    flag = "11";
+                else
+                    flag = "15";
                 break;
             case ("ppm"):
                 if (!ckeckco)
@@ -226,7 +229,7 @@ public class DeviceParse {
                 else
                     flag = "13";
                 break;
-            case ((char) (956) + "g/m" + (char) (179)):
+            case ((char) (181) + "g/m" + (char) (179)):
                 flag = "14";
                 break;
             default:
@@ -262,6 +265,7 @@ public class DeviceParse {
         } else if (str.matches("0A")) {
             str = (char)(186) + "F";
         } else if (str.matches("0B")) {
+            checkpercent = false;
             str = "%";
         } else if (str.matches("0C")) { //CO
             ckeckco = false;
@@ -271,7 +275,11 @@ public class DeviceParse {
             str = "ppm";
         } else if(str.matches("0E")){   //pm2.5 μg/m³
             str = (char) (181) + "g/m" + (char) (179);
+        }else if(str.matches("0F")){
+            checkpercent = true;
+            str = "%";
         }
+
         return str;
     }
 }

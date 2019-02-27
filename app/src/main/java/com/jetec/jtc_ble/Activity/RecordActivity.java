@@ -152,6 +152,8 @@ public class RecordActivity extends AppCompatActivity {
             str = getString(R.string.C) + "/" + "ppm";
         } else if (unit.matches("14")) {
             str = getString(R.string.M) + "/" + (char) (956) + "g/m" + (char) (179);
+        }else if (unit.matches("15")) {
+            str = getString(R.string.percent) + "/" + "%";
         }
 
         return str;
