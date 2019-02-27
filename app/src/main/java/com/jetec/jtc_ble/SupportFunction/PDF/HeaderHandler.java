@@ -34,7 +34,6 @@ public class HeaderHandler extends PdfPageEventHelper {
 
     private String TAG = "HeaderHandler";
     private LogMessage logMessage = new LogMessage();
-    private Phrase header = new Phrase();
     private List<String> setName = new ArrayList<>();
     private List<String> setAddress = new ArrayList<>();
     private List<Integer> setColumn = new ArrayList<>();
@@ -60,10 +59,10 @@ public class HeaderHandler extends PdfPageEventHelper {
                 List<String> dataList = new ArrayList<>();
                 dataList.clear();
                 dataList = recordList.get(i);
+                setAddress.add(dataList.get(0));
+                setName.add(dataList.get(1));
                 if(address.matches("")){
                     address = dataList.get(0);
-                    setName.add(dataList.get(1));
-                    setAddress.add(address);
                     JSONArray jsonArray = new JSONArray(dataList.get(3));
                     for(int j = 0; j < jsonArray.length(); j = j + 4){
                         count++;
@@ -106,8 +105,6 @@ public class HeaderHandler extends PdfPageEventHelper {
                                 devicetitle = (device_count.get(getcount) / 100) + 1;
                             }
                             getcount++;
-                            setName.add(dataList.get(1));
-                            setAddress.add(address);
                             setPage.add(devicetitle);
                         }
                         else {
@@ -118,8 +115,6 @@ public class HeaderHandler extends PdfPageEventHelper {
                                 devicetitle = (device_count.get(getcount) / 50) + 1;
                             }
                             getcount++;
-                            setName.add(dataList.get(1));
-                            setAddress.add(address);
                             setPage.add(devicetitle);
                         }
                         setColumn.add(count);
@@ -139,6 +134,7 @@ public class HeaderHandler extends PdfPageEventHelper {
     @Override
     public void onEndPage(PdfWriter writer, Document document) {
         PdfContentByte canvas = writer.getDirectContentUnder();// 220 820
+        Phrase header = new Phrase();
 
         Phrase name = new Phrase(setName.get(writter), nameFont);
         Phrase address = new Phrase(setAddress.get(writter), addressFont);

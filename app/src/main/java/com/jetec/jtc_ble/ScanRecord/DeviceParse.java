@@ -211,10 +211,10 @@ public class DeviceParse {
             case ("mmh" + (char) (178) + "O"):
                 flag = "8";
                 break;
-            case ("˚C"):
+            case ((char)(186) + "C"):
                 flag = "9";
                 break;
-            case ("˚F"):
+            case ((char)(186) + "F"):
                 flag = "10";
                 break;
             case ("%"):
@@ -258,9 +258,9 @@ public class DeviceParse {
         } else if (str.matches("08")) {
             str = "mmh" + (char) (178) + "O";
         } else if (str.matches("09")) {
-            str = "˚C";
+            str = (char)(186) + "C";
         } else if (str.matches("0A")) {
-            str = "˚F";
+            str = (char)(186) + "F";
         } else if (str.matches("0B")) {
             str = "%";
         } else if (str.matches("0C")) { //CO
@@ -270,7 +270,7 @@ public class DeviceParse {
             ckeckco = true;
             str = "ppm";
         } else if(str.matches("0E")){   //pm2.5 μg/m³
-            str = (char) (956) + "g/m" + (char) (179);
+            str = (char) (181) + "g/m" + (char) (179);
         }
         return str;
     }

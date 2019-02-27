@@ -17,26 +17,19 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.jetec.jtc_ble.R;
-import com.jetec.jtc_ble.SupportFunction.LogMessage;
 import com.jetec.jtc_ble.SupportFunction.PDF.*;
 import com.jetec.jtc_ble.SupportFunction.Runningcsv;
 import com.jetec.jtc_ble.SupportFunction.SQL.AlertRecord;
-import com.jetec.jtc_ble.SupportFunction.Value;
+import com.jetec.jtc_ble.SupportFunction.*;
 import com.jetec.jtc_ble.SupportFunction.ViewAdapter.RecordView;
 import com.opencsv.CSVWriter;
-
 import org.json.JSONArray;
 import org.json.JSONException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -52,13 +45,11 @@ public class RecordActivity extends AppCompatActivity {
     private Vibrator vibrator;
     private LogMessage logMessage = new LogMessage();
     private AlertRecord alertRecord;
-    private HeaderHandler headerHandler;
-    private FooterHandler footerHandler;
-    private CreatTable creatTable;
-    private boolean csvdo = false;
+    private boolean csvdo = false, pdfdo = false;
     private Runningcsv runningcsv;
+    private Runningpdf runningpdf;
     private RecordView recordView;
-    private File file, pdffile;
+    private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +57,7 @@ public class RecordActivity extends AppCompatActivity {
         vibrator = (Vibrator) this.getSystemService(VIBRATOR_SERVICE);
         alertRecord = new AlertRecord(this);
         runningcsv = new Runningcsv(this);
+        runningpdf = new Runningpdf(this);
         recordView = new RecordView(this);
 
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
@@ -172,9 +164,9 @@ public class RecordActivity extends AppCompatActivity {
                 String baseDir = android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
                 // SD卡位置getApplicationContext().getFilesDir().getAbsolutePath();
                 // 系統位置android.os.Environment.getExternalStorageDirectory().getAbsolutePath();
-                String fileName = "JetecRemote" + ".pdf";
+                String fileName = "JetecBLE" + ".pdf";
                 String filePath = baseDir + File.separator + fileName;
-                pdffile = new File(filePath);
+                File pdffile = new File(filePath);
 
                 ArrayList<String> addresslist = new ArrayList<>();
                 addresslist.clear();
@@ -192,40 +184,41 @@ public class RecordActivity extends AppCompatActivity {
                 pdftitle.clear();
                 pdftitle = alertRecord.pdftitle(addresslist);
 
-                headerHandler = new HeaderHandler();
-                footerHandler = new FooterHandler();
-                creatTable = new CreatTable();
+                HeaderHandler headerHandler = new HeaderHandler();
+                FooterHandler footerHandler = new FooterHandler();
+                CreatTable creatTable = new CreatTable();
+
                 Document document = new Document(PageSize.A4, -20, -20, 40, 40);
                 FileOutputStream fOut = new FileOutputStream(pdffile);
                 PdfWriter writer = PdfWriter.getInstance(document, fOut);
-                /*BaseFont bfChinese = BaseFont.createFont("STSongStd-Light", "UniGB-UTF16-H", true);
-                Font chineseFont = new Font(bfChinese, 12, Font.NORMAL);*/
-                //Paragraph title = new Paragraph(gettitle, chineseFont);
+
                 headerHandler.setHeader(pdftitle, device_count, recordList);
                 footerHandler.setallpage(pdftitle, device_count, recordList);
                 writer.setPageEvent(headerHandler);
                 writer.setPageEvent(footerHandler);
 
-                //document.open();
-                creatTable.setList(RecordActivity.this, pdftitle, device_count, recordList);
-                //document.add(creatTable.createTable(document));
-                //document.close();
-                /*Log.e(TAG, "已完成");
-                setdpp = true;
-                if (running.isShowing()) {
-                    running.dismiss();
-                    if (flag == 1) {
-                        Intent shareIntent = new Intent();
-                        shareIntent.setAction(Intent.ACTION_SEND);
-                        shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(pdffile));
-                        shareIntent.setType("text/*");
-                        startActivity(Intent.createChooser(shareIntent, getResources().getText(R.string.send_to)));
-                    } else if (flag == 2) {
-                        Intent intent = new Intent(LogChartView.this, PDFView.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                }*/
+                creatTable.setList(RecordActivity.this, addresslist);
+                //sleep(3000);
+                List<Integer> getColumn = new ArrayList<>();
+                getColumn.clear();
+                getColumn = creatTable.getColumn();
+
+                document.open();
+
+                for(int i = 0; i < getColumn.size(); i++) {
+                    logMessage.showmessage(TAG,"i = " + i);
+                    document.add(creatTable.createTable(i));
+                    //sleep(1000);
+                }
+
+                document.close();
+
+                pdfdo = true;
+
+                if (runningpdf.isCheck()) {
+                    runningpdf.closeFlash();
+                    pdftodo();
+                }
             } catch (IOException | DocumentException e) {
                 e.printStackTrace();
             }
@@ -242,11 +235,9 @@ public class RecordActivity extends AppCompatActivity {
 
                 ArrayList<List<String>> recordList = new ArrayList<>();
                 List<String> csvtitle = new ArrayList<>();
-                //List<String> csvrecord = new ArrayList<>();
 
                 recordList.clear();
                 csvtitle.clear();
-                //csvrecord.clear();
 
                 recordList = alertRecord.exportList(addresslist);
 
@@ -259,7 +250,6 @@ public class RecordActivity extends AppCompatActivity {
                     List<String> dataList = new ArrayList<>();
                     dataList.clear();
                     dataList = recordList.get(i);
-                    //csvrecord.add(String.valueOf(i));
                     for (int j = 0; j < dataList.size(); j++) {
                         if (j != dataList.size() - 1) {
                             logMessage.showmessage(TAG, "do nothing");
@@ -414,6 +404,12 @@ public class RecordActivity extends AppCompatActivity {
         }
     };
 
+    private void pdftodo(){
+        Intent intent = new Intent(this, PDFView.class);
+        startActivity(intent);
+        finish();
+    }
+
     private void csvtodo() {
         Uri csvuri = Uri.fromFile(file);
         Intent shareIntent = new Intent();
@@ -450,10 +446,14 @@ public class RecordActivity extends AppCompatActivity {
                     .setMessage(R.string.exportmessage)
                     .setPositiveButton("PDF", (dialog, which) -> {
                         vibrator.vibrate(100);
-                        ArrayList<String> addresslist = new ArrayList<>();
+                        /*ArrayList<String> addresslist = new ArrayList<>();
                         addresslist.clear();
-                        addresslist.addAll(alertRecord.address());
-
+                        addresslist.addAll(alertRecord.address());*/
+                        if (pdfdo) {
+                            pdftodo();
+                        } else {
+                            runningpdf.startFlash(getString(R.string.exportingpdf));
+                        }
                     })
                     .setNegativeButton("CSV", (dialog, which) -> {
                         vibrator.vibrate(100);

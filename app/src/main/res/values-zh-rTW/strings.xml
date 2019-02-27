@@ -68,5 +68,15 @@
     <string name="recordM">PM2.5:</string>
     <string name="identify">識別碼:</string>
     <string name="exportingcsv">匯出csv中…</string>
+    <string name="exportingpdf">匯出pdf中…</string>
     <string name="send_to">選擇一個應用程式分享檔案</string>
+    <string name="pdfdate">Date</string>
+    <string name="pdfT">Temperature</string>
+    <string name="pdfH">Humidity</string>
+    <string name="pdfC">CO2</string>
+    <string name="pdfCO">CO</string>
+    <string name="pdfP">pressure</string>
+    <string name="pdfM">PM2.5</string>
+    <string name="PDFreport">PDF報表</string>
+    <string name="print">列印</string>
 </resources>

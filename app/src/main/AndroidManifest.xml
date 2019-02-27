@@ -66,6 +66,13 @@
             android:windowSoftInputMode="stateUnchanged|adjustResize"
             tools:ignore="InnerclassSeparator">
         </activity>
+        <activity
+            android:name=".Activity.PDFView"
+            android:theme="@style/nordic_use"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateUnchanged|adjustResize"
+            tools:ignore="InnerclassSeparator">
+        </activity>
         <service
             android:name=".Service.BluetoothLeService"
             android:enabled="true"

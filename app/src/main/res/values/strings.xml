@@ -68,5 +68,15 @@
     <string name="recordM">PM2.5:</string>
     <string name="identify">Identifier:</string>
     <string name="exportingcsv">Exporting csv…</string>
+    <string name="exportingpdf">Exporting pdf…</string>
     <string name="send_to">Chose an app what you want to share with.</string>
+    <string name="pdfdate">Date</string>
+    <string name="pdfT">Temperature</string>
+    <string name="pdfH">Humidity</string>
+    <string name="pdfC">CO2</string>
+    <string name="pdfCO">CO</string>
+    <string name="pdfP">pressure</string>
+    <string name="pdfM">PM2.5</string>
+    <string name="PDFreport">PDF report</string>
+    <string name="print">Print</string>
 </resources>
