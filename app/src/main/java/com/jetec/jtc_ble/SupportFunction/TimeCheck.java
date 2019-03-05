@@ -19,7 +19,7 @@ public class TimeCheck {
             Date time1 = dateFormat.parse(recordTime);
             Date time2 = dateFormat.parse(nowTime);
 
-            time1.setTime(time1.getTime() + 1000);  //60000
+            time1.setTime(time1.getTime() + 60000);  //60000
 
             if (time2.getTime() == time1.getTime()){
                 check = true;

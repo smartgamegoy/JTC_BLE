@@ -65,7 +65,7 @@ public class FirstActivity extends AppCompatActivity {
     private RunningFlash runningFlash;
     private String BID;
     private String Jetec = "Jetec";
-    private boolean s_connect = false, engineer = false;
+    private boolean s_connect = false, engineer = false, nextpage = false;
     private BluetoothLeService mBluetoothLeService;
     private BluetoothAdapter mBluetoothAdapter;
     private View no_device;
@@ -667,6 +667,7 @@ public class FirstActivity extends AppCompatActivity {
     }
 
     private void engineer_function() {
+        nextpage = true;
         Intent intent = new Intent(FirstActivity.this, EngineerMode.class);
 
         intent.putStringArrayListExtra("selectItem", selectItem);
@@ -679,6 +680,7 @@ public class FirstActivity extends AppCompatActivity {
     }
 
     private void device_function() {
+        nextpage = true;
         Intent intent = new Intent(FirstActivity.this, DeviceFunction.class);
 
         intent.putExtra("BID", BID);
@@ -1317,6 +1319,10 @@ public class FirstActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         logMessage.showmessage(TAG, "onPause");
+        logMessage.showmessage(TAG, "s_connect = " + s_connect);
+        logMessage.showmessage(TAG, "nextpage = " + nextpage);
+        if (s_connect && nextpage)
+            unregisterReceiver(mGattUpdateReceiver);
         if (mBluetoothAdapter != null) {
             //noinspection deprecation
             mBluetoothAdapter.stopLeScan(mLeScanCallback);

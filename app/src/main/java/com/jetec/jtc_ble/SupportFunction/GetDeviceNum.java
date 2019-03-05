@@ -1,17 +1,23 @@
 package com.jetec.jtc_ble.SupportFunction;
 
 import android.content.Context;
-import android.util.Log;
-
 import com.jetec.jtc_ble.R;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetDeviceNum {
 
     private String TAG = "GetDeviceNum";
+    private LogMessage logMessage = new LogMessage();
     private Context context;
+    private List<String> nameList = new ArrayList<>();
 
     public GetDeviceNum(Context context){
         this.context = context;
+        nameList.clear();
+        for (int i = 0; i < Value.model_name.length(); i++) {
+            nameList.add(String.valueOf(Value.model_name.charAt(i)));
+        }
     }
 
     public String get(String str){
@@ -62,18 +68,18 @@ public class GetDeviceNum {
             char model = 0;
             String newStr = str.substring(str.indexOf("+") + 1, str.indexOf("."))
                     .replaceFirst("^0*", "");
-            Log.d(TAG, "newStr = " + newStr);
             if(!newStr.matches("")) {
                 model = Value.model_name.charAt(Integer.valueOf(newStr) - 1);
             }
-            Log.d(TAG, "model = " + model);
             if(String.valueOf(model).matches("P")){
                 renum = context.getString(R.string.P);
             }
             else if(String.valueOf(model).matches("M")){
                 renum = context.getString(R.string.M);
             }
-            else if(String.valueOf(model).matches("C")){
+            else if(String.valueOf(model).matches("C") ||
+                    String.valueOf(model).matches("D") ||
+                    String.valueOf(model).matches("E")){
                 renum = context.getString(R.string.C);
             }
             else if(String.valueOf(model).matches("T")){
@@ -94,11 +100,17 @@ public class GetDeviceNum {
                     .replaceFirst("^0*", "");
         }
         else if(str.startsWith("PR")){
-            renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
-                    .replaceFirst("^0*", "");
+            if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                renum = "0";
+            }
+            else {
+                renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                        .replaceFirst("^0*", "");
+            }
         }
         else{
-            if(str.startsWith("IH") || str.startsWith("IL") || str.startsWith("EH") || str.startsWith("EL")) {
+            if(str.startsWith("IH1") || str.startsWith("IL1") || str.startsWith("EH1") || str.startsWith("EL1")) {
+                if(nameList.get(0).matches("T")){
                     if (str.contains("+")) {
                         if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
                             renum = "0";
@@ -127,139 +139,185 @@ public class GetDeviceNum {
                             }
                         }
                     }
-                /*else {
-                    if(Value.name.get(0).toString().matches("T")) {
-                        if (str.contains("+")) {
-                            if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
-                                renum = "0";
+                }
+                else if(nameList.get(0).matches("H")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+                else if(nameList.get(0).matches("C") ||
+                        nameList.get(0).matches("D") ||
+                        nameList.get(0).matches("E")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+                else if(nameList.get(0).matches("M")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+                else if(nameList.get(0).matches("Z")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+            }
+            else if(str.startsWith("IH2") || str.startsWith("IL2") || str.startsWith("EH2") || str.startsWith("EL2")) {
+                if(nameList.get(1).matches("T")){
+                    if (str.contains("+")) {
+                        if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                            renum = "0";
+                        }
+                        else {
+                            String newStr = str.substring(str.indexOf("+") + 1, str.length())
+                                    .replaceFirst("^0*", "");
+                            if (newStr.startsWith(".")) {
+                                renum = "0" + newStr;
                             } else {
-                                String newStr = str.substring(str.indexOf("+") + 1, str.length())
-                                        .replaceFirst("^0*", "");
-                                Log.e("這裡","newStr = " + newStr);
-                                if (newStr.matches("")) {
-                                    renum = "0";
-                                } else {
-                                    if(newStr.startsWith(".")){
-                                        renum = "0" + newStr;
-                                    }
-                                    else {
-                                        renum = newStr;
-                                        Log.e(TAG, "renum = " + renum);
-                                    }
-                                }
+                                renum = newStr;
                             }
-                        } else {
-                            if (str.substring(str.indexOf("-") + 1, str.length()).matches("0000.0")) {
-                                renum = "0";
+                        }
+                    }
+                    else {
+                        if (str.substring(str.indexOf("-") + 1, str.length()).matches("0000.0")) {
+                            renum = "0";
+                        }
+                        else {
+                            String newStr = str.substring(str.indexOf("-") + 1, str.length())
+                                    .replaceFirst("^0*", "");
+                            if (newStr.startsWith(".")) {
+                                renum = "-" + "0" + newStr;
                             } else {
-                                String newStr = str.substring(str.indexOf("-") + 1, str.length())
-                                        .replaceFirst("^0*", "");
-                                if (newStr.matches("")) {
-                                    renum = "0";
-                                } else {
-                                    if(newStr.startsWith(".")){
-                                        renum = "-" + "0" + newStr;
-                                    }
-                                    else {
-                                        renum = "-" + newStr;
-                                    }
-                                }
+                                renum = "-" + newStr;
                             }
                         }
                     }
-                    else if(Value.name.get(0).toString().matches("H")){
-                        if (str.contains("+")) {
-                            if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
-                                renum = "0";
-                            }
-                            else {
-                                String newStr = str.substring(str.indexOf("+") + 1, str.indexOf("."))
-                                        .replaceFirst("^0*", "");
-                                if (newStr.matches("")) {
-                                    renum = "0";
-                                } else {
-                                    renum = newStr;
-                                }
-                            }
+                }
+                else if(nameList.get(1).matches("H")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+                else if(nameList.get(1).matches("C") ||
+                        nameList.get(1).matches("D") ||
+                        nameList.get(1).matches("E")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+                else if(nameList.get(1).matches("M")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+                else if(nameList.get(1).matches("Z")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+            }
+            else if(str.startsWith("IH3") || str.startsWith("IL3") || str.startsWith("EH3") || str.startsWith("EL3")) {
+                if(nameList.get(2).matches("T")){
+                    if (str.contains("+")) {
+                        if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                            renum = "0";
                         }
                         else {
-                            if (str.substring(str.indexOf("-") + 1, str.length()).matches("0000.0")) {
-                                renum = "0";
-                            }
-                            else {
-                                String newStr = str.substring(str.indexOf("-") + 1, str.indexOf("."))
-                                        .replaceFirst("^0*", "");
-                                if (newStr.matches("")) {
-                                    renum = "0";
-                                } else {
-                                    renum = "-" + newStr;
-                                }
+                            String newStr = str.substring(str.indexOf("+") + 1, str.length())
+                                    .replaceFirst("^0*", "");
+                            if (newStr.startsWith(".")) {
+                                renum = "0" + newStr;
+                            } else {
+                                renum = newStr;
                             }
                         }
                     }
-                    else if(Value.name.get(0).toString().matches("C") ||
-                            Value.name.get(0).toString().matches("D") ||
-                            Value.name.get(0).toString().matches("E")){
-                        if (str.contains("+")) {
-                            if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
-                                renum = "0";
-                            }
-                            else {
-                                String newStr = str.substring(str.indexOf("+") + 1, str.indexOf("."))
-                                        .replaceFirst("^0*", "");
-                                if (newStr.matches("")) {
-                                    renum = "0";
-                                } else {
-                                    renum = newStr;
-                                }
-                            }
+                    else {
+                        if (str.substring(str.indexOf("-") + 1, str.length()).matches("0000.0")) {
+                            renum = "0";
                         }
                         else {
-                            if (str.substring(str.indexOf("-") + 1, str.length()).matches("0000.0")) {
-                                renum = "0";
-                            }
-                            else {
-                                String newStr = str.substring(str.indexOf("-") + 1, str.indexOf("."))
-                                        .replaceFirst("^0*", "");
-                                if (newStr.matches("")) {
-                                    renum = "0";
-                                } else {
-                                    renum = "-" + newStr;
-                                }
+                            String newStr = str.substring(str.indexOf("-") + 1, str.length())
+                                    .replaceFirst("^0*", "");
+                            if (newStr.startsWith(".")) {
+                                renum = "-" + "0" + newStr;
+                            } else {
+                                renum = "-" + newStr;
                             }
                         }
                     }
-                    else if(Value.name.get(0).toString().matches("I")){
-                        if (str.contains("+")) {
-                            if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
-                                renum = "0";
-                            }
-                            else {
-                                String newStr = str.substring(str.indexOf("+") + 1, str.indexOf("."))
-                                        .replaceFirst("^0*", "");
-                                if (newStr.matches("")) {
-                                    renum = "0";
-                                } else {
-                                    renum = newStr;
-                                }
-                            }
-                        }
-                        else {
-                            if (str.substring(str.indexOf("-") + 1, str.length()).matches("0000.0")) {
-                                renum = "0";
-                            }
-                            else {
-                                String newStr = str.substring(str.indexOf("-") + 1, str.indexOf("."))
-                                        .replaceFirst("^0*", "");
-                                if (newStr.matches("")) {
-                                    renum = "0";
-                                } else {
-                                    renum = "-" + newStr;
-                                }
-                            }
-                        }
+                }
+                else if(nameList.get(2).matches("H")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
                     }
-                }*/
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+                else if(nameList.get(2).matches("C") ||
+                        nameList.get(2).matches("D") ||
+                        nameList.get(2).matches("E")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+                else if(nameList.get(2).matches("M")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
+                else if(nameList.get(2).matches("Z")){
+                    if (str.substring(str.indexOf("+") + 1, str.length()).matches("0000.0")) {
+                        renum = "0";
+                    }
+                    else {
+                        renum = str.substring(str.indexOf("+") + 1, str.indexOf("."))
+                                .replaceFirst("^0*", "");
+                    }
+                }
             }
             else {
                 if(str.startsWith("INTER")){

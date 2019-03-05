@@ -84,4 +84,7 @@
     <string name="print">列印</string>
     <string name="changename">裝置名稱</string>
     <string name="percentadjustment">比例調整</string>
+    <string name="wrong">輸入錯誤!</string>
+    <string name="max">不可低於下限</string>
+    <string name="min">不可高於上限</string>
 </resources>

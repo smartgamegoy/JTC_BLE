@@ -13,4 +13,5 @@ public class Value {
     public static String Characteristic_uuid_TX;
     public static String Characteristic_uuid_RX;
     public final static String E_word = "@JETEC";
+
 }

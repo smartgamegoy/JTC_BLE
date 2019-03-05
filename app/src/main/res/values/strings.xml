@@ -84,4 +84,7 @@
     <string name="print">Print</string>
     <string name="changename">Device name</string>
     <string name="percentadjustment">Proportion adjustment</string>
+    <string name="wrong">Wrong value!</string>
+    <string name="max">It should be kept above the minimum</string>
+    <string name="min">It should be kept below the maxmum</string>
 </resources>

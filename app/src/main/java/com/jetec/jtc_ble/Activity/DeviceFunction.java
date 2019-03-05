@@ -20,21 +20,20 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
+import com.jetec.jtc_ble.Dialog.*;
 import com.jetec.jtc_ble.R;
 import com.jetec.jtc_ble.Service.BluetoothLeService;
+import com.jetec.jtc_ble.SupportFunction.CheckDeviceName;
 import com.jetec.jtc_ble.SupportFunction.GetDeviceName;
 import com.jetec.jtc_ble.SupportFunction.GetDeviceNum;
 import com.jetec.jtc_ble.SupportFunction.LogMessage;
 import com.jetec.jtc_ble.SupportFunction.Value;
 import com.jetec.jtc_ble.SupportFunction.ViewAdapter.Function;
-
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
-
 import static com.jetec.jtc_ble.Activity.FirstActivity.getManager;
 import static com.jetec.jtc_ble.Activity.FirstActivity.makeGattUpdateIntentFilter;
 
@@ -52,6 +51,10 @@ public class DeviceFunction extends AppCompatActivity {
     private String BID;
     private ArrayList<String> selectItem, reList, dataList, deviceNameList, deviceNumList;
     private Function function;
+    private InputDialog inputDialog = new InputDialog();
+    private SpkDialog spkDialog = new SpkDialog();
+    private RLDialog rlDialog;
+    private CheckDeviceName checkDeviceName = new CheckDeviceName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +119,7 @@ public class DeviceFunction extends AppCompatActivity {
 
         getDeviceName = new GetDeviceName(this, Value.model_name);
         getDeviceNum = new GetDeviceNum(this);
+        rlDialog = new RLDialog(this);
 
         logMessage.showmessage(TAG,"reList = " + reList);
 
@@ -138,26 +142,39 @@ public class DeviceFunction extends AppCompatActivity {
 
             vibrator.vibrate(100);
             String select = selectItem.get(position);
+            String title_name = deviceNameList.get(position);
             logMessage.showmessage(TAG,"select = " + select);
             //noinspection deprecation
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            if(select.startsWith("SPK")){
+                String num = deviceNumList.get(position);
+                spkDialog.setAlert(DeviceFunction.this, mBluetoothLeService, select,
+                        title_name, num);
+            }
+            else if(select.startsWith("RL")){
+                rlDialog.setAlert(mBluetoothLeService, select, title_name);
+            }
+            else {
+                inputDialog.setAlert(DeviceFunction.this, mBluetoothLeService, select,
+                        title_name, selectItem, deviceNumList);
+            }
+            //mBluetoothAdapter.stopLeScan(mLeScanCallback);
+
             //String output = switch_dialog(select, List_d_function.get(position));
-            if (select.startsWith("ADR")) {
-                    /*String description = getString(R.string.description);
+            /*if (select.startsWith("ADR")) {
+                    String description = getString(R.string.description);
                     interval = new Interval(DeviceEngineer.this, Value.all_Width, Value.all_Height, mBluetoothLeService, description);
-                    interval.showDialog();*/
+                    interval.showDialog();
             } else if (select.startsWith("DP") || select.startsWith("SPK")) {
-                    /*switchDialog = new SwitchDialog(DeviceEngineer.this, mBluetoothLeService);
+                    switchDialog = new SwitchDialog(DeviceEngineer.this, mBluetoothLeService);
                     choseDialog = switchDialog.chose(select, List_d_num.get(position), List_d_function.get(position), vibrator);
                     switchDialog.setDialog(choseDialog);
                     choseDialog.show();
-                    choseDialog.setCanceledOnTouchOutside(false);*/
+                    choseDialog.setCanceledOnTouchOutside(false);
             } else {
-                    /*inDialog = inputDialog(DeviceEngineer.this, List_d_function.get(position), select);
+                    inDialog = inputDialog(DeviceEngineer.this, List_d_function.get(position), select);
                     inDialog.show();
-                    inDialog.setCanceledOnTouchOutside(false);*/
-            }
-
+                    inDialog.setCanceledOnTouchOutside(false);
+            }*/
         }
     };
 
@@ -182,6 +199,69 @@ public class DeviceFunction extends AppCompatActivity {
                         String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                         String text = new String(txValue, "UTF-8");
+                        logMessage.showmessage(TAG,"text = " + text);
+                        if(text.startsWith("EH") || text.startsWith("EL") ||
+                                text.startsWith("PR") || text.startsWith("RL") ||
+                                text.startsWith("ADR") || text.startsWith("SPK")){
+                            int i = selectItem.indexOf(checkDeviceName.setName(text));
+                            reList.set((i - 1), text);
+                            deviceNumList.set(i, getDeviceNum.get(reList.get(i - 1)));
+                            logMessage.showmessage(TAG,"reList = " + reList);
+                            logMessage.showmessage(TAG,"deviceNumList = " + deviceNumList);
+                            function.notifyDataSetChanged();
+                        }
+                        else if(text.startsWith("NAME")){
+                            deviceNumList.set(0, text.substring(4, text.length()));
+                            logMessage.showmessage(TAG,"deviceNumList = " + deviceNumList);
+                            function.notifyDataSetChanged();
+                        }
+                        /*if(text.startsWith("EH1") || text.startsWith("EH2") || text.startsWith("EH3")){
+                            int i = selectItem.indexOf(checkDeviceName.setName(text));
+                            reList.set((i - 1), text);
+                            deviceNumList.set(i, getDeviceNum.get(reList.get(i - 1)));
+                            logMessage.showmessage(TAG,"reList = " + reList);
+                            logMessage.showmessage(TAG,"deviceNumList = " + deviceNumList);
+                            function.notifyDataSetChanged();
+                        }
+                        else if(text.startsWith("EL1") || text.startsWith("EL2") || text.startsWith("EL3")){
+                            int i = selectItem.indexOf(checkDeviceName.setName(text));
+                            reList.set((i - 1), text);
+                            deviceNumList.set(i, getDeviceNum.get(reList.get(i - 1)));
+                            logMessage.showmessage(TAG,"reList = " + reList);
+                            logMessage.showmessage(TAG,"deviceNumList = " + deviceNumList);
+                            function.notifyDataSetChanged();
+                        }
+                        else if(text.startsWith("PR1") || text.startsWith("PR2") || text.startsWith("PR3")){
+                            int i = selectItem.indexOf(checkDeviceName.setName(text));
+                            reList.set((i - 1), text);
+                            deviceNumList.set(i, getDeviceNum.get(reList.get(i - 1)));
+                            logMessage.showmessage(TAG,"reList = " + reList);
+                            logMessage.showmessage(TAG,"deviceNumList = " + deviceNumList);
+                            function.notifyDataSetChanged();
+                        }else if(text.startsWith("RL")){
+                            int i = selectItem.indexOf(checkDeviceName.setName(text));
+                            reList.set((i - 1), text);
+                            deviceNumList.set(i, getDeviceNum.get(reList.get(i - 1)));
+                            logMessage.showmessage(TAG,"reList = " + reList);
+                            logMessage.showmessage(TAG,"deviceNumList = " + deviceNumList);
+                            function.notifyDataSetChanged();
+                        }
+                        else if(text.startsWith("ADR")){
+                            int i = selectItem.indexOf(checkDeviceName.setName(text));
+                            reList.set((i - 1), text);
+                            deviceNumList.set(i, getDeviceNum.get(reList.get(i - 1)));
+                            logMessage.showmessage(TAG,"reList = " + reList);
+                            logMessage.showmessage(TAG,"deviceNumList = " + deviceNumList);
+                            function.notifyDataSetChanged();
+                        }
+                        else if(text.startsWith("SPK")){
+                            int i = selectItem.indexOf(checkDeviceName.setName(text));
+                            reList.set((i - 1), text);
+                            deviceNumList.set(i, getDeviceNum.get(reList.get(i - 1)));
+                            logMessage.showmessage(TAG,"reList = " + reList);
+                            logMessage.showmessage(TAG,"deviceNumList = " + deviceNumList);
+                            function.notifyDataSetChanged();
+                        }*/
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -224,9 +304,6 @@ public class DeviceFunction extends AppCompatActivity {
                         .setMessage("斷開藍牙")
                         .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
                             vibrator.vibrate(100);
-                            if (mBluetoothAdapter != null)
-                                //noinspection deprecation
-                                mBluetoothAdapter.stopLeScan(mLeScanCallback);
                             Service_close();
                             Value.connected = false;
                             disconnect();
@@ -274,9 +351,6 @@ public class DeviceFunction extends AppCompatActivity {
             mBluetoothLeService.stopSelf();
             mBluetoothLeService = null;
         }
-        if (mBluetoothAdapter != null)
-            //noinspection deprecation
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
     }
 
     @Override
@@ -302,15 +376,7 @@ public class DeviceFunction extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         logMessage.showmessage(TAG, "onPause");
-
-        if (mBluetoothAdapter != null) {
-            //noinspection deprecation
-            mBluetoothAdapter.stopLeScan(mLeScanCallback);
-            s_connect = true;
-        }
-
-        /*if (s_connect) {
+        if (s_connect)
             unregisterReceiver(mGattUpdateReceiver);
-        }*/
     }
 }
