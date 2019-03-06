@@ -11,12 +11,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
+import android.renderscript.Sampler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -1327,6 +1329,29 @@ public class FirstActivity extends AppCompatActivity {
             //noinspection deprecation
             mBluetoothAdapter.stopLeScan(mLeScanCallback);
             s_connect = true;
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // land do nothing is ok
+            if (mBluetoothAdapter != null)
+                //noinspection deprecation
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            mHandler.removeCallbacksAndMessages(null);
+            valueHandler.removeCallbacksAndMessages(null);
+            show_device();
+        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // port do nothing is ok
+            if (mBluetoothAdapter != null)
+                //noinspection deprecation
+                mBluetoothAdapter.stopLeScan(mLeScanCallback);
+            mHandler.removeCallbacksAndMessages(null);
+            valueHandler.removeCallbacksAndMessages(null);
+            show_device();
         }
     }
 }

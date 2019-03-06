@@ -85,9 +85,10 @@ public class InputDialog {
         switch (chose) {
             case ("NAME"): {
                 editText.setHint(" " + context.getString(R.string.changename));
-                editText.setKeyListener(DigitsKeyListener.getInstance(".,$%&^!()-_=+';:|}{[]*→←↘↖、，。?~～#€￠" +
+                /*editText.setKeyListener(DigitsKeyListener.getInstance(".,$%&^!()-_=+';:|}{[]*→←↘↖、，。?~～#€￠" +
                         "￡￥abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@>/<"));
-                editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+                editText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);*/
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
                 editText.addTextChangedListener(new EditChangeName(editText));
             }
             break;
@@ -499,8 +500,14 @@ public class InputDialog {
             }
         });
 
-        progressDialog.setContentView(layout, new ConstraintLayout.LayoutParams((3 * dm.widthPixels / 5),
-                (dm.heightPixels / 4)));
+        if(dm.heightPixels > dm.widthPixels) {
+            progressDialog.setContentView(layout, new ConstraintLayout.LayoutParams((3 * dm.widthPixels / 5),
+                    (dm.heightPixels / 4)));
+        }
+        else {
+            progressDialog.setContentView(layout, new ConstraintLayout.LayoutParams((2 * dm.widthPixels / 5),
+                    (2 * dm.heightPixels / 5)));
+        }
 
         return progressDialog;
     }

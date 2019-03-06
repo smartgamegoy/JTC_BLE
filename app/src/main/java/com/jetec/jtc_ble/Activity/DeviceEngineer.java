@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -306,5 +307,18 @@ public class DeviceEngineer extends AppCompatActivity {
         /*if (s_connect) {
             unregisterReceiver(mGattUpdateReceiver);
         }*/
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // land do nothing is ok
+            //show_device();
+        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // port do nothing is ok
+            //show_device();
+        }
     }
 }

@@ -11,9 +11,8 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colortoolbar"
         android:minHeight="?attr/actionBarSize"
-        app:layout_constraintBottom_toTopOf="@+id/include4"
+        app:layout_constraintBottom_toTopOf="@+id/include6"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.50"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
@@ -21,7 +20,7 @@
     </android.support.v7.widget.Toolbar>
 
     <include
-        android:id="@+id/include4"
+        android:id="@+id/include6"
         layout="@layout/engineer_function" />
 
 </android.support.constraint.ConstraintLayout>

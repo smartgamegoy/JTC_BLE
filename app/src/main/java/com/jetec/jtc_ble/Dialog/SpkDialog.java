@@ -60,10 +60,14 @@ public class SpkDialog {
         by.setText(context.getString(R.string.butoon_yes));
         bn.setText(context.getString(R.string.butoon_no));
 
-        if (num.matches("On"))
+        if (num.matches("On")) {
             switch1.setChecked(true);
-        else
+            set = chose + "+0001.0";
+        }
+        else {
             switch1.setChecked(false);
+            set = chose + "+0000.0";
+        }
 
         switch1.setOnCheckedChangeListener((buttonView, isChecked) -> {
             // TODO Auto-generated method stub
@@ -89,8 +93,14 @@ public class SpkDialog {
             processing.dismiss();
         });
 
-        progressDialog.setContentView(layout, new ConstraintLayout.LayoutParams((3 * dm.widthPixels / 5),
-                (dm.heightPixels / 4)));
+        if(dm.heightPixels > dm.widthPixels) {
+            progressDialog.setContentView(layout, new ConstraintLayout.LayoutParams((3 * dm.widthPixels / 5),
+                    (dm.heightPixels / 4)));
+        }
+        else {
+            progressDialog.setContentView(layout, new ConstraintLayout.LayoutParams((2 * dm.widthPixels / 5),
+                    (2 * dm.heightPixels / 5)));
+        }
 
         return progressDialog;
     }

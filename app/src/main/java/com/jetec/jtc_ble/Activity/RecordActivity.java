@@ -1,6 +1,7 @@
 package com.jetec.jtc_ble.Activity;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -524,5 +525,18 @@ public class RecordActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         logMessage.showmessage(TAG, "onPause");
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // land do nothing is ok
+            //show_device();
+        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // port do nothing is ok
+            //show_device();
+        }
     }
 }

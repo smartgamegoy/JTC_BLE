@@ -110,8 +110,14 @@ public class RLDialog {
             processing.dismiss();
         });
 
-        progressDialog.setContentView(layout, new ConstraintLayout.LayoutParams((3 * dm.widthPixels / 5),
-                (dm.heightPixels / 4)));
+        if(dm.heightPixels > dm.widthPixels) {
+            progressDialog.setContentView(layout, new ConstraintLayout.LayoutParams((3 * dm.widthPixels / 5),
+                    (dm.heightPixels / 4)));
+        }
+        else {
+            progressDialog.setContentView(layout, new ConstraintLayout.LayoutParams((2 * dm.widthPixels / 5),
+                    (2 * dm.heightPixels / 5)));
+        }
 
         return progressDialog;
     }

@@ -24,6 +24,8 @@ public class DeviceParse {
     private Boolean ckeckco, checkpercent;
     private static final int EBLE_MANDATA = 0xFF;//«Manufacturer Specific Data»	Bluetooth Core Specification:
     private static final int EBLE_128BitUUIDCom = 0x07;//«Complete List of 128-bit Service Class UUIDs»	Bluetooth Core Specification:
+    private static final int EBLE_LOCALNAME = 0x09;//«Complete Local Name»	Bluetooth Core Specification:
+    private static final int EBLE_SHORTNAME = 0x08;//«Shortened Local Name»	Bluetooth Core Specification:
 
     @SuppressLint("UseSparseArrays")
     public DeviceParse() {
@@ -43,7 +45,6 @@ public class DeviceParse {
         for (int i = 0; i < devices.size(); i++) {
             list = new ArrayList<>();
             Map<Integer, String> parse = recordParse.ParseRecord(record.get(i));
-
             if (parse.containsKey(EBLE_MANDATA)) {
                 String tmpString = parse.get(EBLE_MANDATA);
                 assert tmpString != null;
@@ -75,13 +76,17 @@ public class DeviceParse {
                 assert tmpString != null;
                 if (tmpString.substring(0, 4).matches("2028")) {    //jetec company id
 //                    logMessage.showmessage(TAG,"devices.size = " + devices.size());
-                    if (devices.get(i).getName() == null) {
+                    if(parse.containsKey(EBLE_LOCALNAME)) {
+                        String name = parse.get(EBLE_LOCALNAME);
+                        list.add(getname(name));
+                    }
+                    /*if (devices.get(i).getName() == null) {
                         list.add("N/A");
                     } else {
                         if(devices.get(i) != null) {
                             list.add(devices.get(i).getName());
                         }
-                    }
+                    }*/
                     list.add(devices.get(i).getAddress());
                     tmpString = tmpString.substring(6, tmpString.length());
                     if (parse.containsKey(EBLE_128BitUUIDCom)) {
@@ -281,5 +286,20 @@ public class DeviceParse {
         }
 
         return str;
+    }
+
+    private String getname(String getname){
+        String str = "0123456789ABCDEF";
+        char[] hexs = getname.toCharArray();
+        byte[] bytes = new byte[getname.length() / 2];
+        int n;
+
+        for (int i = 0; i < bytes.length; i++) {
+            n = str.indexOf(hexs[2 * i]) * 16;
+            n += str.indexOf(hexs[2 * i + 1]);
+            bytes[i] = (byte) (n & 0xff);
+        }
+
+        return new String(bytes);
     }
 }

@@ -58,6 +58,7 @@ public class RecordParse {
         @SuppressLint("UseSparseArrays")
         Map<Integer, String> ret = new HashMap<>();
         int index = 0;
+        logMessage.showmessage(TAG,"scanRecord = " + scanRecord);
         while (index < scanRecord.length) {
             int length = byteToInt(scanRecord[index++]);
             //Zero value indicates that we are done with the record now
@@ -85,7 +86,7 @@ public class RecordParse {
             }
             index += length;
         }
-        //logMessage.showmessage(TAG,"record = " + ret);
+        logMessage.showmessage(TAG,"record = " + ret);
         return ret;
     }
 

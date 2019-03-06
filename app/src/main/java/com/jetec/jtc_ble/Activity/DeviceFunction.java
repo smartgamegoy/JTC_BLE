@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -17,6 +18,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -196,7 +199,6 @@ public class DeviceFunction extends AppCompatActivity {
             } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 runOnUiThread(() -> {
                     try {
-                        String currentDateTimeString = DateFormat.getTimeInstance().format(new Date());
                         byte[] txValue = intents.getByteArrayExtra(BluetoothLeService.EXTRA_DATA);
                         String text = new String(txValue, "UTF-8");
                         logMessage.showmessage(TAG,"text = " + text);
@@ -299,18 +301,6 @@ public class DeviceFunction extends AppCompatActivity {
                 break;
             case KeyEvent.KEYCODE_BACK: {
                 vibrator.vibrate(100);
-                new AlertDialog.Builder(this)
-                        .setTitle("結束連線")
-                        .setMessage("斷開藍牙")
-                        .setPositiveButton(R.string.butoon_yes, (dialog, which) -> {
-                            vibrator.vibrate(100);
-                            Service_close();
-                            Value.connected = false;
-                            disconnect();
-                        })
-                        .setNeutralButton(R.string.butoon_no, (dialog, which) -> {
-                        })
-                        .show();
             }
             break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
@@ -334,6 +324,31 @@ public class DeviceFunction extends AppCompatActivity {
         //Value.Jsonlist.clear();
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {   //toolbar menu item
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            vibrator.vibrate(100);
+            Service_close();
+            Value.connected = false;
+            disconnect();
+            return true;
+        }
+        return true;
     }
 
     @Override
@@ -378,5 +393,18 @@ public class DeviceFunction extends AppCompatActivity {
         logMessage.showmessage(TAG, "onPause");
         if (s_connect)
             unregisterReceiver(mGattUpdateReceiver);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // land do nothing is ok
+            //show_device();
+        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // port do nothing is ok
+            //show_device();
+        }
     }
 }

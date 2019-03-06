@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Vibrator;
@@ -535,5 +536,18 @@ public class EngineerMode extends AppCompatActivity {
         //Value.Jsonlist.clear();
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // land do nothing is ok
+            //show_device();
+        } else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // port do nothing is ok
+            //show_device();
+        }
     }
 }
